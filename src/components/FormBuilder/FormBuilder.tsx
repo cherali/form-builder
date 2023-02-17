@@ -15,6 +15,7 @@ import { AppCheckboxForm } from 'components/basics/fields/AppCheckboxForm'
 import { AppSelectForm } from 'components/basics/fields/AppSelectForm'
 import { AppRadioForm } from 'components/basics/fields/AppRadioForm'
 import { AppHTMLText } from 'components/basics/fields/AppHTMLText'
+import { AppText } from 'components/basics/AppText'
 
 import type { FormBuilderProps } from './index.d'
 
@@ -113,7 +114,9 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 
 	return (
 		<AppGrid>
-			{form && update && <AppForm onSubmit={handleSubmit} defaultValues={defaultValues} validationSchema={validationSchema}>
+			{form.length === 0 && <AppText>Form empty</AppText>}
+
+			{form.length > 0 && update && <AppForm onSubmit={handleSubmit} defaultValues={defaultValues} validationSchema={validationSchema}>
 				{() => (
 					<AppGrid display='flex' flexDirection='column' gap={8}>
 						{

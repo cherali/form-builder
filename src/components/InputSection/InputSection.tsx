@@ -140,7 +140,11 @@ const InputSection: FC<InputSectionProps> = () => {
 	return (
 		<AppGrid>
 			<AppText variant='h5'>Input:</AppText>
+
 			<Divider />
+
+			{!selectedItem && <AppText>Field not selected</AppText>}
+
 			{selectedItem && <AppGrid marginTop={8} overflow='auto' height='80vh' py={4}>
 				<AppForm defaultValues={defaultValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
 					{({ getValues, setValue, trigger, formState: { isValid, isSubmitted } }) => {
