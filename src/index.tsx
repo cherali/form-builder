@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import ThemeProvider from 'providers/ThemeProvider'
+import FormProvider from 'providers/FormProvider/FormProvider'
 
+import 'react-grid-layout/css/styles.css'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +13,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <App />
+      <FormProvider>
+        <App />
+      </FormProvider>
     </ThemeProvider>
   </React.StrictMode>
 )
