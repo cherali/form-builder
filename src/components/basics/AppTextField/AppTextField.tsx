@@ -9,6 +9,11 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import CloseIcon from '@mui/icons-material/Close'
 import { StyledActionButton, StyledTextField } from './AppTextField.styles'
 import type { AppTextFieldProps } from './index.d'
+import {
+  formatterValueMapper, formatterOnChangeMapper,
+} from 'utils/objects'
+
+const emptyFunction = (value: any) => value
 
 const AppTextField = forwardRef<any, AppTextFieldProps>(({
   label,
@@ -32,6 +37,7 @@ const AppTextField = forwardRef<any, AppTextFieldProps>(({
   startIcon,
   textTransform,
   description,
+  formatter,
   ...props
 }, ref) => {
   const [showValue, setShowValue] = useState<boolean>(defaultShowSecureValue)
@@ -98,6 +104,16 @@ const AppTextField = forwardRef<any, AppTextFieldProps>(({
   const _inputType = !showValue ? 'password' : 'text'
 
 
+
+  // formatter
+  const valueFormatter = formatter ? formatterValueMapper[formatter as FieldFormatter] : emptyFunction
+  const onChangeFormatter = formatter ? formatterOnChangeMapper[formatter as FieldFormatter] : emptyFunction
+
+  const handleChangeInput = (e: any) => {
+    e.target.value = onChangeFormatter(e?.target?.value)
+    onChangeValue(e)
+  }
+
   return (
     <FormControl fullWidth size={size}>
       <StyledTextField
@@ -109,8 +125,8 @@ const AppTextField = forwardRef<any, AppTextFieldProps>(({
         variant={variant}
         disabled={disabled}
         InputProps={TextInputProps}
-        value={value}
-        onChange={onChangeValue}
+        value={valueFormatter(value as any)}
+        onChange={handleChangeInput}
         inputProps={inputProperties}
         error={error}
         ref={ref}

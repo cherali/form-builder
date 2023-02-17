@@ -17,6 +17,8 @@ import { useFormProvider } from 'providers/FormProvider/useFormProvider'
 import { AppCheckboxForm } from 'components/basics/fields/AppCheckboxForm'
 import { AppTextFormField } from 'components/basics/fields/AppTextFormField'
 import { AppDatepickerForm } from 'components/basics/fields/AppDatepickerForm'
+import CloseIcon from '@mui/icons-material/Close'
+import { CloseButton } from './InputSection.styles'
 import { InputSectionProps } from './index.d'
 
 const { FieldTypeObject } = require('types/global.d')
@@ -42,6 +44,32 @@ const InputSection: FC<InputSectionProps> = () => {
 		type: yupString().required('Type field is required.'),
 		placeholder: yupString().required('Placeholder field is required.'),
 	})
+
+	const formatterOptions: Record<FieldTypeObject, FieldFormatterOptions> = {
+		text: [
+			{ title: '3-dig comma seperated', value: 'comma-3dig' },
+			{ title: 'phone', value: 'phone' }
+
+		],
+		number: [],
+		html: [],
+		date: [],
+		select: [],
+		radio: [],
+		'check-box': []
+	}
+
+	const validationOptions: Record<FieldTypeObject, FieldValidationOptions> = {
+		text: [
+			{ title: 'PHONE', value: 'phone' }
+		],
+		number: [],
+		html: [],
+		date: [],
+		select: [],
+		radio: [],
+		'check-box': []
+	}
 
 	const hasOptions = (type: FieldType) => {
 		if (type === 'radio' || type === 'select') {
@@ -131,6 +159,16 @@ const InputSection: FC<InputSectionProps> = () => {
 		}
 	}
 
+	const getFormatter = (item: FormFieldProps) => {
+		switch (item.type) {
+			case 'text':
+				return item.formatter
+
+			default:
+				return undefined
+		}
+	}
+
 	const handleClearFieldClicked = (setValue: UseFormSetValue<any>, name: string, type: FieldType) => () => {
 		setValue(name, getClearedValue(type))
 	}
@@ -150,6 +188,11 @@ const InputSection: FC<InputSectionProps> = () => {
 					{({ getValues, setValue, trigger, formState: { isValid, isSubmitted } }) => {
 
 						const RenderDefaultComponent = getDefaultValueInput(getValues('type'))
+
+						const formatterOptionList = formatterOptions[getValues('type') as FieldTypeObject]
+						const validationOptionList = validationOptions[getValues('type') as FieldTypeObject]
+
+						const hasExtra = formatterOptionList.length > 0 || validationOptionList.length > 0
 
 						return (
 							<AppGrid display='flex' flexDirection='column' gap={6} mx={4}>
@@ -175,7 +218,7 @@ const InputSection: FC<InputSectionProps> = () => {
 									name='type'
 
 									options={Object.values(FieldTypeObject).map(item => ({ title: item, value: item }))}
-									onChange={(e: any) => {
+									onChange={(e: FormChange) => {
 										setValue('type', e.target.value, {
 											shouldValidate: true,
 										})
@@ -210,6 +253,7 @@ const InputSection: FC<InputSectionProps> = () => {
 										options={getOptions(getValues('options'), getValues('type'))}
 										type={getType(getValues('type'))}
 										defaultValue={getDefaultValue(getValues('type'), getValues('defaultOptionValue'))}
+										formatter={getFormatter(getValues())}
 									/>
 
 									{hasClear(getValues('type')) && <AppButton size='large' color='warning' onClick={handleClearFieldClicked(setValue, 'defaultOptionValue', getValues('type'))}>Clear</AppButton>}
@@ -221,6 +265,58 @@ const InputSection: FC<InputSectionProps> = () => {
 										label='Required'
 									/>
 								</AppGrid>
+
+								<Divider>
+									Extra Options
+								</Divider>
+
+								{hasExtra && <AppGrid display='flex' flexDirection='column' gap={8}>
+									{validationOptionList.length > 0 && <AppGrid display='flex' gap={4}>
+										<AppSelectForm
+											name='validation'
+											label='Field Validation'
+											options={validationOptionList}
+											onChange={(e: FormChange) => {
+												setValue('validation', e.target.value)
+												trigger()
+											}}
+										/>
+
+										<CloseButton
+											size='large'
+											color='error'
+											onClick={() => {
+												setValue('validation', '')
+												trigger()
+											}}
+										>
+											<CloseIcon />
+										</CloseButton>
+									</AppGrid>}
+
+									{formatterOptionList.length > 0 && <AppGrid display='flex' gap={4}>
+										<AppSelectForm
+											name='formatter'
+											label='Field Formatter'
+											options={formatterOptionList}
+											onChange={(e: FormChange) => {
+												setValue('formatter', e.target.value)
+												trigger()
+											}}
+										/>
+
+										<CloseButton
+											size='large'
+											color='error'
+											onClick={() => {
+												setValue('formatter', '')
+												trigger()
+											}}
+										>
+											<CloseIcon />
+										</CloseButton>
+									</AppGrid>}
+								</AppGrid>}
 
 								<AppGrid marginTop={8} display='flex' flexDirection='column' gap={8}>
 									<AppButton fullWidth variant='contained' color='primary' type='submit' disabled={!isValid && isSubmitted}>Update Field</AppButton>

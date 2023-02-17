@@ -1,9 +1,6 @@
-import { AppSelectProps } from './../AppSelect/index.d'
+import { AppSelectProps } from 'components/basics/AppSelect'
 
-
-import { AppTextFieldProps } from './../AppTextField/index.d'
-
-type EType = 'error' | 'value' | 'onChange' | 'onClear' | 'name'
+type EType = 'error' | 'value' | 'onChange' | 'onClear'
 
 export interface AppSelectFormProps extends Omit<AppSelectProps, EType> {
   name: string;

@@ -17,4 +17,5 @@ export interface AppTextFieldProps extends Omit<TextFieldProps, "error" | "type"
   startIcon?: OverridableComponent;
   textTransform?: (onChange: StandardInputProps['onChange'], evt: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   description?: string;
+  formatter?: FieldFormatterType;
 }

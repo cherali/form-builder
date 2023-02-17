@@ -17,6 +17,37 @@ declare interface FieldAccessLevel {
   delete: Array<UserAccessRole>;
 }
 
+enum FieldValidation {
+  'phone' = 'phone'
+}
+
+enum FieldFormatter {
+  'comma-3dig' = 'comma-3dig',
+  'phone' = 'phone'
+}
+
+declare type FieldValidationType = keyof typeof FieldValidation
+
+declare type FieldFormatterType = keyof typeof FieldFormatter
+
+declare interface FieldValidationObject {
+  title: string;
+  value: FieldValidationType;
+}
+
+declare interface FieldFormatterObject {
+  title: string;
+  value: FieldFormatterType;
+}
+
+declare type FieldValidationOptions = Array<FieldValidationObject>
+
+declare type FieldFormatterOptions = Array<FieldFormatterObject>
+
+declare type FormatterValueFn = (value: string) => string
+declare type ValidationValueFn = StringSchema<string | undefined, AnyObject, undefined, "">
+
+declare type FormChange = React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 
 declare interface FormFieldProps {
   id: string;
@@ -27,11 +58,13 @@ declare interface FormFieldProps {
   isRequired?: boolean;
   options?: string;
   defaultOptionValue?: string | boolean;
-  validation?: (value: any) => boolean;
-  formatter?: (value: any) => any;
+  validation?: FieldValidationType;
+  formatter?: FieldFormatterType;
 }
 
 
 module.exports = {
-  FieldTypeObject
+  FieldTypeObject,
+  FieldValidation,
+  FieldFormatter,
 }

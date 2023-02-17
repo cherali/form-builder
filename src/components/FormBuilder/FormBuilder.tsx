@@ -5,7 +5,7 @@ import {
 } from 'yup'
 import { useFormProvider } from 'providers/FormProvider/useFormProvider'
 import { getOptionFromString } from 'utils/strings'
-import { getFormDefaultValues } from 'utils/objects'
+import { getFormDefaultValues, validationObjects } from 'utils/objects'
 import { AppButton } from 'components/basics/AppButton'
 import { AppForm } from 'components/basics/AppForm'
 import { AppGrid } from 'components/basics/AppGrid'
@@ -32,9 +32,22 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		})
 	}, [selectedItem?.defaultOptionValue])
 
+	const getValidator = (item: FormFieldProps) => {
+		switch (item.type) {
+			case 'text':
+				return item.validation
+
+			default:
+				return undefined
+		}
+	}
 
 	const validationSchema = yupObject({
-		...form.filter(r => r.isRequired).reduce(((ac, cu) => ({ ...ac, [cu.name]: yupString().required(`${cu.name} field is required.`) })), {})
+		...form.filter(r => r.validation || r.isRequired).reduce(((ac, cu) => {
+			const validator = cu.validation ? validationObjects[getValidator(cu) as FieldValidation] : () => yupString()
+			const requireValidator = yupString().required(`${cu.name} field is required.`)
+			return ({ ...ac, [cu.name]: yupString().concat(requireValidator).concat(validator()) })
+		}), {})
 	})
 
 	const handleSubmit = (values: any) => {
@@ -93,7 +106,7 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 			case 'check-box':
 				return item.defaultOptionValue
 			default:
-				return undefined
+				return item.defaultOptionValue
 		}
 	}
 
@@ -105,6 +118,16 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 				return undefined
 
 			default: return undefined
+		}
+	}
+
+	const getFormatter = (item: FormFieldProps) => {
+		switch (item.type) {
+			case 'text':
+				return item.formatter
+
+			default:
+				return undefined
 		}
 	}
 
@@ -127,13 +150,14 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 									<AppGrid key={item.id}>
 										<RenderComponent
 											name={item.name}
-											label={item.type === 'check-box' ? item.placeholder : item.name}
+											label={(item.isRequired ? '* ' : '') + (item.type === 'check-box' ? item.placeholder : item.name)}
 											placeholder={item.placeholder}
 											type={item.type}
 											options={getFieldOption(item) as any}
 											defaultValue={getDefaultValue(item) as any}
 											html={getHtml(item)}
 											description={item.description}
+											formatter={getFormatter(item)}
 										/>
 									</AppGrid>
 								)
