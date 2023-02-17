@@ -1,9 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import reportWebVitals from './reportWebVitals'
 import ThemeProvider from 'providers/ThemeProvider'
 import FormProvider from 'providers/FormProvider/FormProvider'
+
+const App = React.lazy(() => import('./App'))
 
 import 'react-grid-layout/css/styles.css'
 
@@ -14,7 +15,9 @@ root.render(
   <React.StrictMode>
     <ThemeProvider>
       <FormProvider>
-        <App />
+        <React.Suspense fallback={<div>loading</div>}>
+          <App />
+        </React.Suspense>
       </FormProvider>
     </ThemeProvider>
   </React.StrictMode>
