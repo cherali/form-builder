@@ -95,12 +95,10 @@ const AppDatepickerForm: FC<AppDatepickerFormProps> = ({ name, placeholder, defa
 		setValue(name, date ? formatDate(date) : undefined)
 		// change date listener
 		onChageDate((newdate: Date) => {
-			if (getDate()) {
-				setDate(newdate)
-				setValue(name, formatDate(newdate), {
-					shouldValidate: true,
-				})
-			}
+			setValue(name, getDate() ? formatDate(newdate) : "", {
+				shouldValidate: true,
+			})
+			setDate(newdate)
 		})
 
 	}, [])
