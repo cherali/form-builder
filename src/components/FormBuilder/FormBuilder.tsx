@@ -156,6 +156,17 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		}
 	}
 
+	const getFieldLabel = (item: FormFieldProps) => {
+		switch (item.type) {
+			case 'check-box':
+				return item.placeholder
+			case 'radio':
+				return item.placeholder
+			default:
+				return item.name
+		}
+	}
+
 	const handleClear = (item: FormFieldProps, setValue: UseFormSetValue<any>) => () => {
 		if (isFieldClearable(item.type)) {
 			setValue(item.name, '', { shouldValidate: false, shouldTouch: true })
@@ -180,7 +191,7 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 									<AppGrid key={item.id}>
 										<RenderComponent
 											name={item.name}
-											label={(item.isRequired ? '* ' : '') + (item.type === 'check-box' ? item.placeholder : item.name)}
+											label={(item.isRequired ? '* ' : '') + (getFieldLabel(item))}
 											placeholder={item.placeholder}
 											type={item.type}
 											options={getFieldOption(item) as any}

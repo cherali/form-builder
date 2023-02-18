@@ -44,7 +44,7 @@ Create from dynamically with Reactjs. save form automatically and able to define
 
 + html field send value text as value so for this field only name and value is important.
 
-+ Using placeholder as label for check box, because for check box name and displayed text act diffrently.
++ Using placeholder as label for check-box and radio, because for check-box and radio name and displayed text act diffrently.
 
 + In preview section after press submit, logging value if form is valid, else see errors.
 
