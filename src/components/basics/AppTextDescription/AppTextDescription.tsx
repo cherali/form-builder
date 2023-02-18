@@ -5,10 +5,10 @@ import { AppGrid } from '../AppGrid'
 import type { AppTextDescriptionProps } from './index.d'
 
 
-const AppTextDescription: FC<AppTextDescriptionProps> = ({ children, ...rest }) => {
+const AppTextDescription: FC<AppTextDescriptionProps> = ({ children, color = 'gray', ...rest }) => {
 
 	return (
-		<AppGrid alignItems='center' display='flex' color='grey' my={3} mx={2} gap={2}>
+		<AppGrid alignItems='center' display='flex' color={color} my={3} mx={2} gap={2}>
 			<InfoOutlinedIcon />
 			<AppText
 				variant='body2'
