@@ -11,7 +11,6 @@ export const FormProviderContext = createContext<FormProviderContextProps>({
   mappedFormData: {},
   setSelectedItem: emptyFunction,
   updateOrCreateField: emptyFunction,
-  prepareCreate: emptyFunction,
   settings: {
     create: [],
     delete: [],
@@ -20,5 +19,6 @@ export const FormProviderContext = createContext<FormProviderContextProps>({
   },
   setSettings: emptyFunction,
   hasAccess: (value) => false,
-
+  isEditing: () => false,
+  setState: emptyFunction,
 })

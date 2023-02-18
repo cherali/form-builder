@@ -25,7 +25,7 @@ const { FieldTypeObject } = require('types/global.d')
 
 
 const InputSection: FC<InputSectionProps> = () => {
-	const { selectedItem, setSelectedItem, updateOrCreateField } = useFormProvider()
+	const { selectedItem, setSelectedItem, updateOrCreateField, isEditing } = useFormProvider()
 
 	const handleCancelClick = () => {
 		setSelectedItem(undefined)
@@ -364,7 +364,7 @@ const InputSection: FC<InputSectionProps> = () => {
 								</AppGrid>}
 
 								<AppGrid marginTop={8} display='flex' flexDirection='column' gap={8}>
-									<AppButton fullWidth variant='contained' color='primary' type='submit' disabled={!isValid && isSubmitted}>Update Field</AppButton>
+									<AppButton fullWidth variant='contained' color='primary' type='submit' disabled={!isValid && isSubmitted}>{isEditing() ? 'Update' : 'Create'} Field</AppButton>
 									<AppButton fullWidth variant='outlined' color='error' onClick={handleCancelClick}>Cancel</AppButton>
 								</AppGrid>
 							</AppGrid>

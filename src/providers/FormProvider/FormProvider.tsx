@@ -45,7 +45,6 @@ const FormProvider: FC<FormProviderProps> = ({ children }) => {
       })
     } else if (state === 'create') {
       setForm(s => ([...s, newField]))
-      setState('edit')
       setData({ form: [...form, newField], settings })
     }
   }
@@ -54,8 +53,6 @@ const FormProvider: FC<FormProviderProps> = ({ children }) => {
     setForm([])
     setData({ form: [], settings: defaultSettings })
   }
-
-  const prepareCreate = () => setState('create')
 
   const handleSelecteItem = (data?: FormFieldProps) => {
     if (selectedItem) setSelectedItem(undefined)
@@ -89,6 +86,8 @@ const FormProvider: FC<FormProviderProps> = ({ children }) => {
     setData({ form, settings: data })
   }
 
+  const isEditing = () => state === 'edit'
+
   return (
     <FormProviderContext.Provider
       value={{
@@ -100,10 +99,11 @@ const FormProvider: FC<FormProviderProps> = ({ children }) => {
         selectedItem,
         setSelectedItem: handleSelecteItem,
         updateOrCreateField,
-        prepareCreate,
         settings,
         setSettings: setSettingsAndSave,
         hasAccess,
+        isEditing,
+        setState,
       }}
     >
       {children}

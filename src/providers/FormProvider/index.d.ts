@@ -16,10 +16,11 @@ export interface FormProviderContextProps {
   selectedItem?: FormFieldProps;
   setSelectedItem: (data?: FormFieldProps) => void;
   updateOrCreateField: (field: FormFieldProps, id: string) => void;
-  prepareCreate: () => void;
   settings: AccessLevel;
   setSettings: (data: AccessLevel) => void;
   hasAccess: (action: keyof AccessLevel, role?: UserAccessRoleType) => boolean;
+  isEditing: () => boolean;
+  setState: Dispatch<React.SetStateAction<FormProviderState>>;
 }
 
 export type FormProviderState = 'create' | 'edit'

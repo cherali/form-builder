@@ -18,7 +18,7 @@ import type { Confirmation, FieldSectionProps } from './index.d'
 const placeholderTextMaxLengthShow = 20
 
 const FieldSection: FC<FieldSectionProps> = () => {
-	const { form, clearForm, setSelectedItem, setForm, mappedFormData, selectedItem, prepareCreate } = useFormProvider()
+	const { form, clearForm, setSelectedItem, setForm, mappedFormData, selectedItem, setState } = useFormProvider()
 	const { canCreate, canDelete, canUpdate } = useUserRole()
 	const [confirmed, setConfirmed] = useState<Confirmation>({ id: '', open: false })
 
@@ -27,7 +27,7 @@ const FieldSection: FC<FieldSectionProps> = () => {
 	}
 
 	const handleAddNewField = () => {
-		prepareCreate()
+		setState('create')
 		setSelectedItem({
 			id: uuidv4(),
 			type: 'text',
@@ -54,6 +54,7 @@ const FieldSection: FC<FieldSectionProps> = () => {
 			setSelectedItem(undefined)
 		} else {
 			setSelectedItem(field)
+			setState('edit')
 		}
 	}
 
