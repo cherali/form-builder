@@ -1,7 +1,7 @@
 import { useState, FC } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import ReactGridLayout from 'react-grid-layout'
-import { Divider, Tooltip } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import { useFormProvider } from 'providers/FormProvider/useFormProvider'
 import { AppConfirmation } from 'components/basics/AppConfirmation'
 import { AppButton } from 'components/basics/AppButton'
@@ -9,7 +9,8 @@ import { AppGrid } from 'components/basics/AppGrid'
 import { AppText } from 'components/basics/AppText'
 import AddIcon from '@mui/icons-material/Add'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { AppTextDescription } from 'components/basics/AppTextDescription'
+import { useUserRole } from 'hooks/useUserRole'
 import { StyledFieldSection } from './FieldSection.styles'
 import type { Confirmation, FieldSectionProps } from './index.d'
 
@@ -18,6 +19,7 @@ const placeholderTextMaxLengthShow = 20
 
 const FieldSection: FC<FieldSectionProps> = () => {
 	const { form, clearForm, setSelectedItem, setForm, mappedFormData, selectedItem, prepareCreate } = useFormProvider()
+	const { canCreate, canDelete, canUpdate } = useUserRole()
 	const [confirmed, setConfirmed] = useState<Confirmation>({ id: '', open: false })
 
 	const handleClear = () => {
@@ -29,7 +31,8 @@ const FieldSection: FC<FieldSectionProps> = () => {
 		setSelectedItem({
 			id: uuidv4(),
 			type: 'text',
-			name: ''
+			name: '',
+			placeholder: ''
 		})
 	}
 
@@ -58,7 +61,7 @@ const FieldSection: FC<FieldSectionProps> = () => {
 	const handleDeleteField = () => {
 		setConfirmed({ id: '', open: false })
 		setSelectedItem(undefined)
-		setForm(s => s.filter(r => r.id !== confirmed.id))
+		setForm(form.filter(r => r.id !== confirmed.id))
 	}
 
 	const handleDeleteClick = (id: string) => () => {
@@ -71,16 +74,13 @@ const FieldSection: FC<FieldSectionProps> = () => {
 
 	return (
 		<StyledFieldSection>
-			<AppText variant='h5'>Fields:</AppText>
-			<Divider />
 			<AppGrid gap={4} display='flex' justifyContent='flex-end' marginTop={8}>
-				<AppButton color='primary' startIcon={<AddIcon />} onClick={handleAddNewField}>Add New Field</AppButton>
-				<AppButton color='error' variant='outlined' onClick={handleClear}>Clear All</AppButton>
+				{canCreate() && <AppButton color='primary' startIcon={<AddIcon />} onClick={handleAddNewField}>Add New Field</AppButton>}
+				{canDelete() && <AppButton color='error' variant='outlined' onClick={handleClear}>Clear All</AppButton>}
 			</AppGrid>
 
-			<AppGrid display='flex' color='Highlight' gap={4} alignItems='center' mx={4}>
-				<InfoOutlinedIcon />
-				<AppText variant='body2'>You can drag item to change sort.</AppText>
+			<AppGrid mx={4}>
+				<AppTextDescription color='Highlight' variant='body2'>You can drag item to change sort.</AppTextDescription>
 			</AppGrid>
 			<AppGrid marginTop={8} overflow='auto' height='80vh'>
 				{form.length === 0 && <AppText>Form empty</AppText>}
@@ -93,6 +93,7 @@ const FieldSection: FC<FieldSectionProps> = () => {
 					isBounded
 					allowOverlap={false}
 					margin={[4, 8]}
+					isDraggable={canUpdate()}
 					onDragStop={onDragStop}
 					draggableHandle='.drag'
 				>
@@ -116,8 +117,8 @@ const FieldSection: FC<FieldSectionProps> = () => {
 								</AppGrid>
 
 								<AppGrid display='flex' gap={4}>
-									<AppButton color={selectedItem?.id === item.id ? 'warning' : 'info'} variant='outlined' onClick={handleEditField(item)}>{item.id === selectedItem?.id ? 'Cancel Edit' : 'Edit'}</AppButton>
-									<AppButton color='error' onClick={handleDeleteClick(item.id)} >Delete</AppButton>
+									{canUpdate() && <AppButton color={selectedItem?.id === item.id ? 'warning' : 'info'} variant='outlined' onClick={handleEditField(item)}>{item.id === selectedItem?.id ? 'Cancel Edit' : 'Edit'}</AppButton>}
+									{canDelete() && <AppButton color='error' onClick={handleDeleteClick(item.id)} >Delete</AppButton>}
 								</AppGrid>
 							</AppGrid>
 						</AppGrid>

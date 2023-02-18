@@ -12,4 +12,13 @@ export const FormProviderContext = createContext<FormProviderContextProps>({
   setSelectedItem: emptyFunction,
   updateOrCreateField: emptyFunction,
   prepareCreate: emptyFunction,
+  settings: {
+    create: [],
+    delete: [],
+    read: [],
+    update: [],
+  },
+  setSettings: emptyFunction,
+  hasAccess: (value) => false,
+
 })

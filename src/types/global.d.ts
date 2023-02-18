@@ -7,14 +7,30 @@ enum FieldTypeObject {
   radio = 'radio',
   'check-box' = 'check-box'
 }
-declare type UserAccessRole = 'admin' | 'user'
+
+enum UserAccessRole {
+  admin = 'admin',
+  user = 'user'
+}
+
+enum Actions {
+  create = 'create',
+  update = 'update',
+  delete = 'delete',
+  read = 'read',
+}
+
+declare type ActionType = keyof typeof Actions
+
+declare type UserAccessRoleType = keyof typeof UserAccessRole
 
 declare type FieldType = keyof typeof FieldTypeObject
 
-declare interface FieldAccessLevel {
-  read: Array<UserAccessRole>;
-  update: Array<UserAccessRole>;
-  delete: Array<UserAccessRole>;
+declare interface AccessLevel {
+  create: Array<UserAccessRoleType>;
+  read: Array<UserAccessRoleType>;
+  update: Array<UserAccessRoleType>;
+  delete: Array<UserAccessRoleType>;
 }
 
 enum FieldValidation {
@@ -67,4 +83,6 @@ module.exports = {
   FieldTypeObject,
   FieldValidation,
   FieldFormatter,
+  UserAccessRole,
+  Actions,
 }

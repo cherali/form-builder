@@ -1,10 +1,21 @@
+import Access, { withAccess } from 'components/Access/Access'
 import { AppGrid } from 'components/basics/AppGrid'
+import { AppTabs } from 'components/basics/AppTabs'
 import { FieldSection } from 'components/FieldSection'
+import { FormSettings } from 'components/FormSettings'
 import { InputSection } from 'components/InputSection'
 import { PreviewSection } from 'components/PreviewSection'
+import { useUserRole } from 'hooks/useUserRole'
 
 
 function App() {
+  const { canRead, canModifyFormSettings } = useUserRole()
+
+  const tabs = [
+    { label: 'Fields', component: FieldSection },
+    { label: 'Form Settings', component: withAccess(FormSettings, canModifyFormSettings) },
+  ]
+
   return (
     <AppGrid
       container
@@ -17,15 +28,27 @@ function App() {
       px={16}
     >
       <AppGrid flex={1}>
-        <FieldSection />
+        <Access checkAccess={canRead}>
+          <AppTabs
+            orientation='horizontal'
+            indicatorColor='secondary'
+            textColor='secondary'
+            tabs={tabs}
+            variant='scrollable'
+          />
+        </Access>
       </AppGrid>
 
       <AppGrid flex={1}>
-        <InputSection />
+        <Access checkAccess={canRead} renderBlank>
+          <InputSection />
+        </Access>
       </AppGrid>
 
       <AppGrid flex={1}>
-        <PreviewSection />
+        <Access checkAccess={canRead} renderBlank>
+          <PreviewSection />
+        </Access>
       </AppGrid>
     </AppGrid>
   )

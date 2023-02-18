@@ -8,7 +8,7 @@ export type MapFormData = Record<string, FormFieldProps>
 
 
 export interface FormProviderContextProps {
-  setForm: Dispatch<SetStateAction<Array<FormFieldProps>>>;
+  setForm: (data: Array<FormFieldProps>) => void;
   form: Array<FormFieldProps>;
   clearForm: () => void;
   addField: (field: FormFieldProps) => void;
@@ -17,6 +17,9 @@ export interface FormProviderContextProps {
   setSelectedItem: (data?: FormFieldProps) => void;
   updateOrCreateField: (field: FormFieldProps, id: string) => void;
   prepareCreate: () => void;
+  settings: AccessLevel;
+  setSettings: (data: AccessLevel) => void;
+  hasAccess: (action: keyof AccessLevel, role?: UserAccessRoleType) => boolean;
 }
 
 export type FormProviderState = 'create' | 'edit'

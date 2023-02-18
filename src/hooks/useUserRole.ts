@@ -1,11 +1,25 @@
-/**
- * this hooks get user role and return it
- */
+import { useFormProvider } from 'providers/FormProvider/useFormProvider'
 
-export const useUserRole = (): UserAccessRole => {
-  // somehow get user and extract role
+export const useUserRole = () => {
+  const { hasAccess } = useFormProvider()
 
-  const role = 'admin'
+  const getUserRole = (): UserAccessRoleType => 'admin'
 
-  return role
+  const role = getUserRole()
+
+  const canUpdate = () => hasAccess('update', role)
+  const canDelete = () => hasAccess('delete', role)
+  const canRead = () => hasAccess('read', role)
+  const canCreate = () => hasAccess('create', role)
+
+  const canModifyFormSettings = () => role === 'admin'
+
+  return {
+    role,
+    canUpdate,
+    canDelete,
+    canRead,
+    canCreate,
+    canModifyFormSettings,
+  }
 }
