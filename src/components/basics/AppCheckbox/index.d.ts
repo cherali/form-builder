@@ -9,4 +9,6 @@ export interface AppCheckboxProps extends CheckboxProps {
   helperText?: string;
   onChange: (...event: any[]) => void;
   description?: string;
+  onClear?: () => void;
+  clearable?: boolean;
 }

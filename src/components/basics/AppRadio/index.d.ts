@@ -8,6 +8,8 @@ export interface AppRadioProps extends RadioGroupProps {
   options: Array<AppRadioOptionProps>;
   alignment?: 'vertical' | 'horizontal';
   description?: string;
+  onClear?: () => void;
+  clearable?: boolean;
 }
 
 export interface AppRadioOptionProps {

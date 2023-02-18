@@ -91,7 +91,7 @@ const InputSection: FC<InputSectionProps> = () => {
 			case 'select':
 				return AppSelectForm
 			case 'html':
-				return () => <span></span>
+				return AppTextFormField
 			default:
 				return AppTextFormField
 		}
@@ -154,6 +154,8 @@ const InputSection: FC<InputSectionProps> = () => {
 				return 'Default Checked'
 			case 'date':
 				return 'Default Date'
+			case 'html':
+				return 'Value'
 			default:
 				return 'Default Value'
 		}
@@ -169,8 +171,35 @@ const InputSection: FC<InputSectionProps> = () => {
 		}
 	}
 
+
+	const isRequiredOptionAvaliable = (type: FieldType) => {
+		switch (type) {
+			case 'html':
+				return false
+
+			default:
+				return true
+		}
+	}
+
+
+	const isFieldClearable = (type: FieldType) => {
+		switch (type) {
+			case 'date':
+				return false
+			case 'check-box':
+				return false
+
+			default:
+				return true
+		}
+	}
+
+
 	const handleClearFieldClicked = (setValue: UseFormSetValue<any>, name: string, type: FieldType) => () => {
-		setValue(name, getClearedValue(type))
+		if (isFieldClearable(type)) {
+			setValue(name, getClearedValue(type))
+		}
 	}
 
 	const defaultValues = getFormDefaultValues(selectedItem, ['id'])
@@ -187,10 +216,12 @@ const InputSection: FC<InputSectionProps> = () => {
 				<AppForm defaultValues={defaultValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
 					{({ getValues, setValue, trigger, formState: { isValid, isSubmitted } }) => {
 
-						const RenderDefaultComponent = getDefaultValueInput(getValues('type'))
+						const getTypeField: FieldType = getValues('type')
 
-						const formatterOptionList = formatterOptions[getValues('type') as FieldTypeObject]
-						const validationOptionList = validationOptions[getValues('type') as FieldTypeObject]
+						const RenderDefaultComponent = getDefaultValueInput(getTypeField)
+
+						const formatterOptionList = formatterOptions[getTypeField]
+						const validationOptionList = validationOptions[getTypeField]
 
 						const hasExtra = formatterOptionList.length > 0 || validationOptionList.length > 0
 
@@ -219,56 +250,70 @@ const InputSection: FC<InputSectionProps> = () => {
 
 									options={Object.values(FieldTypeObject).map(item => ({ title: item, value: item }))}
 									onChange={(e: FormChange) => {
-										setValue('type', e.target.value, {
-											shouldValidate: true,
-										})
-										setValue('options', '', {
-											shouldValidate: true,
+										// clear validator
+										setValue('validation', undefined)
 
-										})
+										// clear formatter
+										setValue('formatter', undefined)
+
+										setValue('type', e.target.value)
+
+										setValue('options', '')
+
 										setValue('defaultOptionValue', '', {
 											shouldValidate: true,
 										})
+
+										if (e.target.value === 'html') {
+											setValue('isRequired', false, {
+												shouldValidate: true,
+											})
+										}
 									}}
 
 								/>
 
-								{hasOptions(getValues('type')) &&
+								{hasOptions(getTypeField) &&
 									<AppGrid display='flex' gap={8}>
 
 										<AppTextFormField
 											name='options'
 											label='Options'
 											description='comma seperated name1=value1,name2=value2 pair. *no space after/before comma'
-										/>
 
-										<AppButton size='large' color='success' onClick={() => trigger()}>Update</AppButton>
+											onChange={(e: FormChange) => {
+												setValue('options', e.target.value, {
+													shouldValidate: true,
+												})
+											}}
+										/>
 									</AppGrid>
 								}
 
 								<AppGrid display='flex' gap={8}>
 									<RenderDefaultComponent
 										name='defaultOptionValue'
-										label={getDefaultValueLabel(getValues('type'))}
-										options={getOptions(getValues('options'), getValues('type'))}
-										type={getType(getValues('type'))}
-										defaultValue={getDefaultValue(getValues('type'), getValues('defaultOptionValue'))}
+										label={getDefaultValueLabel(getTypeField)}
+										options={getOptions(getValues('options'), getTypeField)}
+										type={getType(getTypeField)}
+										defaultValue={getDefaultValue(getTypeField, getValues('defaultOptionValue'))}
 										formatter={getFormatter(getValues())}
+										clearable={isFieldClearable(getTypeField)}
+										onClear={handleClearFieldClicked(setValue, 'defaultOptionValue', getTypeField)}
 									/>
 
-									{hasClear(getValues('type')) && <AppButton size='large' color='warning' onClick={handleClearFieldClicked(setValue, 'defaultOptionValue', getValues('type'))}>Clear</AppButton>}
 								</AppGrid>
 
-								<AppGrid marginBottom={4}>
+								{isRequiredOptionAvaliable(getTypeField) && <AppGrid marginBottom={4}>
 									<AppCheckboxForm
 										name='isRequired'
 										label='Required'
 									/>
-								</AppGrid>
+								</AppGrid>}
 
-								<Divider>
+								{hasExtra && <Divider>
 									Extra Options
-								</Divider>
+								</Divider>}
 
 								{hasExtra && <AppGrid display='flex' flexDirection='column' gap={8}>
 									{validationOptionList.length > 0 && <AppGrid display='flex' gap={4}>

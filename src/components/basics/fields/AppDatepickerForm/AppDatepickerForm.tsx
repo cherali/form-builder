@@ -97,7 +97,9 @@ const AppDatepickerForm: FC<AppDatepickerFormProps> = ({ name, placeholder, defa
 		onChageDate((newdate: Date) => {
 			if (getDate()) {
 				setDate(newdate)
-				setValue(name, formatDate(newdate))
+				setValue(name, formatDate(newdate), {
+					shouldValidate: true,
+				})
 			}
 		})
 
@@ -183,7 +185,9 @@ const AppDatepickerForm: FC<AppDatepickerFormProps> = ({ name, placeholder, defa
 	}
 
 	const clearDate = () => {
-		setValue(name, undefined)
+		setValue(name, undefined, {
+			shouldValidate: true,
+		})
 		setDate(undefined)
 		setPickerDate('')
 	}

@@ -1,8 +1,6 @@
 import { FC, useEffect, useState } from 'react'
-import {
-	object as yupObject,
-	string as yupString,
-} from 'yup'
+import { UseFormSetValue } from 'react-hook-form'
+import * as yup from 'yup'
 import { useFormProvider } from 'providers/FormProvider/useFormProvider'
 import { getOptionFromString } from 'utils/strings'
 import { getFormDefaultValues, validationObjects } from 'utils/objects'
@@ -21,7 +19,7 @@ import type { FormBuilderProps } from './index.d'
 
 
 const FormBuilder: FC<FormBuilderProps> = () => {
-	const { form, selectedItem } = useFormProvider()
+	const { form } = useFormProvider()
 
 	const [update, setUpdate] = useState(false)
 
@@ -30,7 +28,7 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		setTimeout(() => {
 			setUpdate(true)
 		})
-	}, [selectedItem?.defaultOptionValue])
+	}, [form])
 
 	const getValidator = (item: FormFieldProps) => {
 		switch (item.type) {
@@ -42,11 +40,25 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		}
 	}
 
-	const validationSchema = yupObject({
-		...form.filter(r => r.validation || r.isRequired).reduce(((ac, cu) => {
-			const validator = cu.validation ? validationObjects[getValidator(cu) as FieldValidation] : () => yupString()
-			const requireValidator = yupString().required(`${cu.name} field is required.`)
-			return ({ ...ac, [cu.name]: yupString().concat(requireValidator).concat(validator()) })
+	const getDefaultYupValidator = (type: FieldType, isRequired: boolean, name: string) => {
+		switch (type) {
+			case 'check-box':
+				return isRequired ? yup.bool().oneOf([true], `${name} field must be checked.`) : yup.bool()
+
+			default:
+				return yup.string()
+		}
+	}
+
+	const validationSchema = yup.object({
+		...form.filter(r => (r.validation || r.isRequired)).reduce(((ac, cu) => {
+			const baseValidator = getDefaultYupValidator(cu.type, Boolean(cu.isRequired), cu.name)
+
+			const validator = cu.validation ? validationObjects[getValidator(cu) as FieldValidation] : () => baseValidator
+
+			const requireValidator = baseValidator.required(`${cu.name} field is required.`)
+
+			return ({ ...ac, [cu.name]: (baseValidator as any).concat(validator()).concat(requireValidator) })
 		}), {})
 	})
 
@@ -131,6 +143,24 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		}
 	}
 
+	const isFieldClearable = (type: FieldType) => {
+		switch (type) {
+			case 'text':
+				return true
+			case 'select':
+				return true
+			case 'radio':
+				return true
+			default:
+				return undefined
+		}
+	}
+
+	const handleClear = (item: FormFieldProps, setValue: UseFormSetValue<any>) => () => {
+		if (isFieldClearable(item.type)) {
+			setValue(item.name, '', { shouldValidate: true })
+		}
+	}
 
 	const defaultValues = form.map(item => getFormDefaultValues(item, ['id']))
 		.reduce(((ac: any, cu: any) => ({ ...ac, [cu.name]: getValue(cu) })), {})
@@ -140,7 +170,7 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 			{form.length === 0 && <AppText>Form empty</AppText>}
 
 			{form.length > 0 && update && <AppForm onSubmit={handleSubmit} defaultValues={defaultValues} validationSchema={validationSchema}>
-				{() => (
+				{({ setValue, getValues, formState: { isValid, isSubmitted } }) => (
 					<AppGrid display='flex' flexDirection='column' gap={8}>
 						{
 							form.map(item => {
@@ -158,12 +188,15 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 											html={getHtml(item)}
 											description={item.description}
 											formatter={getFormatter(item)}
+											clearable={isFieldClearable(item.type)}
+											onClear={handleClear(item, setValue)}
+											value={getValues(item.name)}
 										/>
 									</AppGrid>
 								)
 							})
 						}
-						<AppButton type='submit'>submit</AppButton>
+						<AppButton type='submit' disabled={!isValid && isSubmitted}>submit</AppButton>
 					</AppGrid>
 				)}
 			</AppForm>}
