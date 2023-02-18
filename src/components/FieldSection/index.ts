@@ -1,1 +1,1 @@
-export { default as FieldSection } from './FieldSection'
+export { default } from './FieldSection'

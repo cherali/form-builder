@@ -1,1 +1,1 @@
-export { default as FormSettings } from './FormSettings'
+export { default } from './FormSettings'

@@ -1,11 +1,15 @@
+import { lazy } from 'react'
 import Access, { withAccess } from 'components/Access/Access'
 import { AppGrid } from 'components/basics/AppGrid'
 import { AppTabs } from 'components/basics/AppTabs'
-import { FieldSection } from 'components/FieldSection'
-import { FormSettings } from 'components/FormSettings'
-import { InputSection } from 'components/InputSection'
-import { PreviewSection } from 'components/PreviewSection'
+
 import { useUserRole } from 'hooks/useUserRole'
+import FormSettings from 'components/FormSettings'
+
+
+const FieldSection = lazy(() => import('components/FieldSection'))
+const InputSection = lazy(() => import('components/InputSection'))
+const PreviewSection = lazy(() => import('components/PreviewSection'))
 
 
 function App() {
