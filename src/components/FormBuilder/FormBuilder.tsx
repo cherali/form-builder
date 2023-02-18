@@ -101,12 +101,12 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		}
 	}
 
-	const getHtml = (item: FormFieldProps): string => {
+	const getHtml = (item: FormFieldProps): any => {
 		if (item.type === 'html') {
-			return item.description || ''
+			return item.defaultOptionValue
 		}
 
-		return ''
+		return undefined
 	}
 
 	const getValue = (item: FormFieldProps) => {
@@ -158,7 +158,7 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 
 	const handleClear = (item: FormFieldProps, setValue: UseFormSetValue<any>) => () => {
 		if (isFieldClearable(item.type)) {
-			setValue(item.name, '', { shouldValidate: true })
+			setValue(item.name, '', { shouldValidate: false, shouldTouch: true })
 		}
 	}
 
@@ -170,7 +170,7 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 			{form.length === 0 && <AppText>Form empty</AppText>}
 
 			{form.length > 0 && update && <AppForm onSubmit={handleSubmit} defaultValues={defaultValues} validationSchema={validationSchema}>
-				{({ setValue, getValues, formState: { isValid, isSubmitted } }) => (
+				{({ setValue, formState: { isValid, isSubmitted } }) => (
 					<AppGrid display='flex' flexDirection='column' gap={8}>
 						{
 							form.map(item => {
@@ -190,7 +190,6 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 											formatter={getFormatter(item)}
 											clearable={isFieldClearable(item.type)}
 											onClear={handleClear(item, setValue)}
-											value={getValues(item.name)}
 										/>
 									</AppGrid>
 								)

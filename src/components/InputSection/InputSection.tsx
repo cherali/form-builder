@@ -258,7 +258,9 @@ const InputSection: FC<InputSectionProps> = () => {
 
 										setValue('type', e.target.value)
 
-										setValue('options', '')
+										setValue('options', '', {
+											shouldTouch: true,
+										})
 
 										setValue('defaultOptionValue', '', {
 											shouldValidate: true,

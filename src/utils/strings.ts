@@ -16,7 +16,7 @@ export const commaSeperated = (value: string) => value.toString().replace(/\D/g,
 export const removeCommas = (value: string) => value.replace(/,/g, '')
 
 export const formatPhoneNumber = (value: string) => {
-  let phone = (Number(value.slice(0, 1)) === 0 ? value.slice(1) : value).replace(/\D/g, '').slice(0, 10)
+  let phone = (Number(value.slice(0, 1)) === 0 ? value.slice(1) : value).replace(/\D/g, '')
   const match = phone.match(phoneRegExp)
   if (match) {
     phone = `${match[1]}${match[2] ? ' ' : ''}${match[2]}${match[3] ? '-' : ''}${match[3]}`;
