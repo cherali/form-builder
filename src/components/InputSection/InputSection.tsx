@@ -230,11 +230,15 @@ const InputSection: FC<InputSectionProps> = () => {
 								<AppTextFormField
 									name='name'
 									label='name'
+									clearable
+									onClear={() => setValue('name', '')}
 								/>
 
 								<AppTextFormField
 									name='placeholder'
 									label='placeholder'
+									clearable
+									onClear={() => setValue('placeholder', '')}
 								/>
 
 								<AppTextFormField
@@ -242,6 +246,8 @@ const InputSection: FC<InputSectionProps> = () => {
 									label='description'
 									multiline
 									rows={4}
+									clearable
+									onClear={() => setValue('description', '')}
 								/>
 
 								<AppSelectForm
