@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { UseFormSetValue } from 'react-hook-form'
 import * as yup from 'yup'
 import { useFormProvider } from 'providers/FormProvider/useFormProvider'
@@ -20,15 +20,6 @@ import type { FormBuilderProps } from './index.d'
 
 const FormBuilder: FC<FormBuilderProps> = () => {
 	const { form } = useFormProvider()
-
-	const [update, setUpdate] = useState(false)
-
-	useEffect(() => {
-		setUpdate(false)
-		setTimeout(() => {
-			setUpdate(true)
-		})
-	}, [form])
 
 	const getValidator = (item: FormFieldProps) => {
 		switch (item.type) {
@@ -180,35 +171,42 @@ const FormBuilder: FC<FormBuilderProps> = () => {
 		<AppGrid>
 			{form.length === 0 && <AppText>Form empty</AppText>}
 
-			{form.length > 0 && update && <AppForm onSubmit={handleSubmit} defaultValues={defaultValues} validationSchema={validationSchema}>
-				{({ setValue, formState: { isValid, isSubmitted } }) => (
-					<AppGrid display='flex' flexDirection='column' gap={8}>
-						{
-							form.map(item => {
-								const RenderComponent = getComponent(item.type)
+			{form.length > 0 && <AppForm onSubmit={handleSubmit} defaultValues={defaultValues} validationSchema={validationSchema}>
+				{({ setValue, reset, formState: { isValid, isSubmitted } }) => {
 
-								return (
-									<AppGrid key={item.id}>
-										<RenderComponent
-											name={item.name}
-											label={(item.isRequired ? '* ' : '') + (getFieldLabel(item))}
-											placeholder={item.placeholder}
-											type={item.type}
-											options={getFieldOption(item) as any}
-											defaultValue={getDefaultValue(item) as any}
-											html={getHtml(item)}
-											description={item.description}
-											formatter={getFormatter(item)}
-											clearable={isFieldClearable(item.type)}
-											onClear={handleClear(item, setValue)}
-										/>
-									</AppGrid>
-								)
-							})
-						}
-						<AppButton type='submit' disabled={!isValid && isSubmitted}>submit</AppButton>
-					</AppGrid>
-				)}
+					useEffect(() => {
+						reset(defaultValues)
+					}, [form])
+
+					return (
+						<AppGrid display='flex' flexDirection='column' gap={8}>
+							{
+								form.map(item => {
+									const RenderComponent = getComponent(item.type)
+
+									return (
+										<AppGrid key={item.id}>
+											<RenderComponent
+												name={item.name}
+												label={(item.isRequired ? '* ' : '') + (getFieldLabel(item))}
+												placeholder={item.placeholder}
+												type={item.type}
+												options={getFieldOption(item) as any}
+												defaultValue={getDefaultValue(item) as any}
+												html={getHtml(item)}
+												description={item.description}
+												formatter={getFormatter(item)}
+												clearable={isFieldClearable(item.type)}
+												onClear={handleClear(item, setValue)}
+											/>
+										</AppGrid>
+									)
+								})
+							}
+							<AppButton type='submit' disabled={!isValid && isSubmitted}>submit</AppButton>
+						</AppGrid>
+					)
+				}}
 			</AppForm>}
 		</AppGrid>
 	)
