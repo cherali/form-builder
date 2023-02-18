@@ -9,7 +9,9 @@ const AppTextDescription: FC<AppTextDescriptionProps> = ({ children, color = 'gr
 
 	return (
 		<AppGrid alignItems='center' display='flex' color={color} my={3} mx={2} gap={2}>
-			<InfoOutlinedIcon />
+			<AppGrid alignSelf='start'>
+				<InfoOutlinedIcon />
+			</AppGrid>
 			<AppText
 				variant='body2'
 				component='span'
