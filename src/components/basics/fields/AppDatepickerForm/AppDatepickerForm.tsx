@@ -15,6 +15,7 @@ import { AppTextFormField } from '../AppTextFormField'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import type { AppDatepickerFormProps } from './index.d'
 
 
@@ -203,6 +204,7 @@ const AppDatepickerForm: FC<AppDatepickerFormProps> = ({ name, placeholder, defa
 					label={label}
 					placeholder={placeholder}
 					description={description}
+					rightPrefix={<CalendarTodayIcon />}
 				/>
 				<AppPopover
 					id={id}
